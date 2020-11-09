@@ -11,6 +11,7 @@ nphi = 18 #how many total phi sectors there are (zero out unused ones)
 wordlength = 96
 tpe = 95  #tracks per event (for each fiber)
 nevents = 1 #how many events to make inputs for
+dz = 1; #viewing window about vtx
 coe = open("trackerRegion_alltracks_sectors_2x9_TTbar_PU200_64EventsPerFile_0.coe", "r")
 vtx = open("v_data.dat","r");
 #read info lines at top of file
@@ -40,19 +41,18 @@ for event in range(nevents):
 					zb = datab[41:53];
 					#print(zb);
 					zf = 0.0;
-					#for i in range(5):
-					#	if ((zb[i] == "1") & (i == 0)):	
-					#		zf = zf - pow(2,4);
-					#	elif (zb[i] == "1"):
-					#		zf = zf + pow(2,4-i);
-					#for i in range(7):	
-					#	if (zb[i+5] == "1"):
-					#		zf = zf + pow(0.5,i+1);
+					for i in range(12):
+						if ((zb[i] == "1") & (i == 0)):	
+							zf = zf - pow(2,11);
+						elif (zb[i] == "1"):
+							zf = zf + pow(2,11-i);
+					
+					zf = zf/20.0;
 					#print(zf);
-					#if (abs(zf-vtxz) < 1.0) != 1:
-					#	isdat = 0; #is there data to write? 0 for no and 1 for yes.
-					#else:
-					#	isdat=1;
+					if (abs(zf-vtxz) < dz) == 1:
+						isdat = 1; #is there data to write? 0 for no and 1 for yes.
+					else:
+						isdat=0;
 			else:
 				zlist = ['0' for i in range(wordlength)]
 				#print str(zlist)
@@ -68,9 +68,9 @@ for event in range(nevents):
 			else:
 				let = 'a' #if not first time opening file, append to it (don't overwrite)
 			phifile = open(fname, let)
-			#if isdat == 1:
-			phifile.write("0x" + data + "\n")
-			ntrks[phi]=ntrks[phi]+1;
+			if isdat == 1:
+				phifile.write("0x" + data + "\n")
+				ntrks[phi]=ntrks[phi]+1;
 			phifile.close()
 	#now write 0s to signify end of event.
 	for phi in range(nphi):

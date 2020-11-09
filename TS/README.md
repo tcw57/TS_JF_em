@@ -1,4 +1,4 @@
-*Note* This project assumes you have access to the "LibHLS" github repository. 
+*Note* This project assumes you have access to the "LibHLS" github repository. zExtract.cpp is used for debugging purposes. It reads out the information for single tracks in each of the processed .dat files. 
 
 step 1: Go into the LibHLS github repo and run the Vertex module. Perform csim and go into the project directory and move the file, "human_readable_patterns.txt", into this directory. 
 
