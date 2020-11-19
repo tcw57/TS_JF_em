@@ -50,7 +50,7 @@ int main(int argc, char ** argv){
 //	double pTinvf;
 	double pT;
 	double etaf;
-	double middle_phi;
+//	double middle_phi;
 	double phi0f;
 	int counter;
 	string data_in;
@@ -104,7 +104,7 @@ int main(int argc, char ** argv){
 	int pTint;
 	int phi;
 	int phi0;
-	int pslice_final;
+//	int pslice_final;
 	string data;
 	string bin_z;
 	string bin_eta;
@@ -179,17 +179,17 @@ int main(int argc, char ** argv){
 	//		pTinvf = -1.0* /*pTinvmax*/ pTmax + pTinverse * 2 * pTmax / (pow(2,nptbits)-1);
 			//taking only the absolute value of pT.
 //			pT = fabs(/*1.0 / */ pTinvf);
-			pT = pTinverse*1.0;
+			pT = pTinverse*0.25; //Used to be pTinverse*1.0, but new scale factor is 0.25
 			if(pT > 511) pT = 511;
 			trkd.pT = (int)pT;
 
-			if(1.0 * eta < pow(2, netabits-1)){
-				eta += (int)pow(2, netabits-1);
+			if(1.0 * eta > pow(2, netabits-1)){
+				eta -= (int)pow(2, netabits);
 			}
-			else {
-				eta -= (int)pow(2, netabits-1);
-			}
-			etaf = -maxeta + eta * 2.0 * maxeta / (pow(2, netabits)-1);
+//			else {
+//				eta -= (int)pow(2, netabits-1);
+//			}
+			etaf = (1.0e-4)*eta;//-maxeta + eta * 2.0 * maxeta / (pow(2, netabits)-1);
 			//cout << etaf << endl;
 			trkd.eta = etaf; //-1.0 * log(sqrt(tf*tf + 1.0) - tf);
 			if(trkd.eta > maxeta) {
@@ -208,37 +208,37 @@ int main(int argc, char ** argv){
 			//	z0 -= (int)pow(2, nzbits-1);
 			//}
 
-			trkd.z = -1.0*maxz;
+			trkd.z = -1.0*maxz; //Because all of the filtered tracks will be very close together, might as well place them in the same z bin
 			//cout << "pT ";
 			//cout << (int)pT;
 			//cout << " phi0: ";
 			//cout << phi0 << endl;
-			if(1.0 * phi0 < pow(2, 12-1)){
-				phi0 += (int)pow(2, 12-1);
-			}
-			else {
+			if(1.0 * phi0 > pow(2, 12-1)){
 				phi0 -= (int)pow(2, 12-1);
 			}
+//			else {
+//				phi0 -= (int)pow(2, 12-1); idk why we included this part. The above is easier to convert by two's complement. E.g. consider 101. This number is -3, but using the above gives 5-2^3=-3. This checks out
+//			}
 			//cout << -1.0*phi0/9.0 + phi0 * 2.0 * phi0/9.0 /( pow(2, 12)-1) << endl;
-			phi0f = phi0*(2*(M_PI/9.0)/(pow(2,12)-1))-M_PI/9;
+			phi0f = (1.6e-3)*phi0;//phi0*(2*(M_PI/9.0)/(pow(2,12)-1))-M_PI/9; The phi data is given as a rescaled version of the nonrelative phi value
 
-			if(pslice % 2 == 0) {
-				middle_phi = -1*M_PI + M_PI / (9) + (pslice/2) * (2*M_PI / 9);
-			}
-			else if(pslice % 2 == 1) {
-				middle_phi = -1*M_PI + M_PI / (9) + ((pslice-1)/2) * (2*M_PI / 9);
-			}
-			if((int)pT == 9) {
-				cout << "phi0 = " << bin_to_int(bin_data.substr(69, 12)) << endl;
-			}
+			//if(pslice % 2 == 0) {
+			//	middle_phi = -1*M_PI + M_PI / (9) + (pslice/2) * (2*M_PI / 9);
+			//}
+			//else if(pslice % 2 == 1) {
+			//	middle_phi = -1*M_PI + M_PI / (9) + ((pslice-1)/2) * (2*M_PI / 9);
+			//}
+			//if((int)pT == 9) {
+			//	cout << "phi0 = " << bin_to_int(bin_data.substr(69, 12)) << endl;
+			//}
 			
 
-			phi0f = phi0f+middle_phi;
+			//phi0f = //middlle_phi;
 
-			phi0 = (int)floor((phi0f + M_PI)*(27)/(2*M_PI));
+			//phi0 = (int)floor((phi0f + M_PI)*(27)/(2*M_PI));
 
-			pslice_final = phi0;
-			trkd.phi = -1.0*maxphi + pslice_final* phistep + (phistep / 2);
+			//pslice_final = phi0;
+			trkd.phi = phi0f;// + pslice_final* phistep + (phistep / 2);
 			trkd.bincount = 0;
 
 			++ntracks;
